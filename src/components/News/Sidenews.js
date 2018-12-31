@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import NewSingle from './NewSingle';
+import axios from 'axios';
+import SingleSide from './SingleSide';
 import Error from './Error';
 
-class News extends Component {
+class Sidenews extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            news: [],
+            sidenews: [],
             error: false
         };
     }
@@ -14,13 +15,20 @@ class News extends Component {
     componentDidMount() {
         const url = (`https://newsapi.org/v2/${this.props.news.type}?${this.props.news.query}&apiKey=3c5c8f726f4f4d87a352e63017c68eb0`);
 
-        fetch(url)
+        //This is how to do a post request with axios
+        // axios.post(url, {
+        //     data: {
+        //         news: {
+        //             title: 'asdadasd',
+        //             description: 'asnaslda'
+        //         }
+        //     }
+        // })
+
+        axios.get(url)
             .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
                 this.setState({
-                    news: data.articles
+                    sidenews: response.data.articles
                 })
             })
             .catch((error) => {
@@ -28,14 +36,15 @@ class News extends Component {
                     error: true
                 })
             });
+
     }
 
     renderItems() {
         if (!this.state.error) {
-            return this.state.news.map((item) => (
+            return this.state.sidenews.map((item) => (
                 //If you are iterating through an array of react components
                 //each component needs a unique key
-                <NewSingle key={item.url} item={item} />
+                <SingleSide key={item.url} item={item} />
             ))
         } else {
             return <Error />
@@ -44,11 +53,11 @@ class News extends Component {
 
     render() {
         return (
-            <div className="row">
+            <div>
                 {this.renderItems()}
             </div>
         );
     }
 }
 
-export default News;
+export default Sidenews;
